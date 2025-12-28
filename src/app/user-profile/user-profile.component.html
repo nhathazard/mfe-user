@@ -1,0 +1,60 @@
+<div class="user-container">
+  <h2>User Profile - Micro Frontend</h2>
+  
+  <div class="profile-card">
+    <div class="profile-header">
+      <img [src]="user.avatar" [alt]="user.name" class="avatar">
+      <div class="user-info">
+        <h3>{{ user.name }}</h3>
+        <p class="email">{{ user.email }}</p>
+        <span class="role">{{ user.role }}</span>
+        
+        <!-- Role changer -->
+        <div class="role-changer">
+          <label>Change Role:</label>
+          <select (change)="changeUserRole($event)" [value]="user.role">
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="profile-details">
+      <div class="detail-item">
+        <strong>Ngày tham gia:</strong> {{ user.joinDate }}
+      </div>
+      <div class="detail-item">
+        <strong>Lần đăng nhập cuối:</strong> {{ user.lastLogin }}
+      </div>
+    </div>
+  </div>
+
+  <!-- User Selection for Product Communication -->
+  <div class="user-selection-section">
+    <h3>🔄 Select User to Send to Product MFE</h3>
+    <div class="user-grid">
+      <div class="user-card" 
+           *ngFor="let u of users" 
+           (click)="selectUserForProducts(u)"
+           [class.selected]="u.id === user.id">
+        <h4>{{ u.name }}</h4>
+        <p>{{ u.email }}</p>
+        <span class="role-badge">{{ u.role }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="activities-section">
+    <h3>Hoạt động gần đây</h3>
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let activity of activities">
+        <div class="activity-content">
+          <span class="activity-action">{{ activity.action }}</span>
+          <span class="activity-time">{{ activity.date }} - {{ activity.time }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

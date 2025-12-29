@@ -17,9 +17,7 @@ export class UserProfileComponent implements OnInit {
     name: 'Nguyễn Văn A',
     email: 'nguyenvana@example.com',
     role: 'Admin',
-    avatar: 'https://via.placeholder.com/150',
-    joinDate: '2023-01-15',
-    lastLogin: '2024-12-24 10:30:00'
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjI1IiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0zMCAxMjBDMzAgMTA0IDUwIDkwIDc1IDkwUzEyMCAxMDQgMTIwIDEyMFYxNTBIMzBWMTIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K',
   };
 
   users = [
@@ -29,31 +27,19 @@ export class UserProfileComponent implements OnInit {
     { id: 4, name: 'Phạm Thị D', email: 'phamthid@example.com', role: 'User' }
   ];
 
-  activities = [
-    { action: 'Đăng nhập hệ thống', time: '10:30:00', date: '2024-12-24' },
-    { action: 'Cập nhật thông tin cá nhân', time: '09:15:00', date: '2024-12-23' },
-    { action: 'Thay đổi mật khẩu', time: '14:20:00', date: '2024-12-22' },
-    { action: 'Xem báo cáo', time: '16:45:00', date: '2024-12-21' }
-  ];
 
   ngOnInit() {
-    // Load saved state from localStorage
     this.loadStateFromStorage();
   }
 
-  // Gửi thông tin user được chọn đến Product MFE
   selectUserForProducts(selectedUser: any) {
-    // Emit event qua window object (global communication)
     if (window.emitEvent) {
       window.emitEvent('USER_SELECTED', selectedUser, 'USER_MFE');
     }
-    
-    // Highlight selected user and save state
     this.user = { ...this.user, ...selectedUser };
     this.saveStateToStorage();
   }
 
-  // Gửi event khi user thay đổi role
   changeUserRole(event: Event) {
     const target = event.target as HTMLSelectElement;
     const newRole = target.value;
@@ -63,12 +49,10 @@ export class UserProfileComponent implements OnInit {
     if (window.emitEvent) {
       window.emitEvent('USER_ROLE_CHANGED', updatedUser, 'USER_MFE');
     }
-    
-    // Save state to persist across navigation
+
     this.saveStateToStorage();
   }
 
-  // Save state to localStorage
   private saveStateToStorage() {
     const state = {
       user: this.user,
@@ -77,20 +61,26 @@ export class UserProfileComponent implements OnInit {
     localStorage.setItem('mfe-user-state', JSON.stringify(state));
   }
 
-  // Load state from localStorage
   private loadStateFromStorage() {
     const saved = localStorage.getItem('mfe-user-state');
     if (saved) {
       try {
         const state = JSON.parse(saved);
-        // Check if state is not too old (optional)
         const savedTime = new Date(state.timestamp);
         const now = new Date();
-        const hoursDiff = (now.getTime() - savedTime.getTime()) / (1000 * 60 * 60);
+        const minutesDiff = (now.getTime() - savedTime.getTime()) / (1000 * 60);
         
-        if (hoursDiff < 24) { // Keep state for 24 hours
+        if (minutesDiff < 2) {
           this.user = { ...this.user, ...state.user };
           console.log('🔄 Restored user state:', this.user);
+          
+          if (state.user.id !== 1) {
+            if (window.emitEvent) {
+              window.emitEvent('USER_SELECTED', this.user, 'USER_MFE');
+            }
+          }
+        } else {
+          localStorage.removeItem('mfe-user-state');
         }
       } catch (error) {
         console.warn('Failed to load user state:', error);

@@ -34,7 +34,10 @@
 						"scripts": [],
 						"main": "src/main.ts",
 						"extraWebpackConfig": "webpack.config.js",
-						"commonChunk": false
+						"commonChunk": false,
+						"allowedCommonJsDependencies": [
+							"@angular-architects/module-federation"
+						]
 					},
 					"configurations": {
 						"production": {
@@ -75,6 +78,10 @@
 					"defaultConfiguration": "development",
 					"options": {
 						"port": 4202,
+						"host": "0.0.0.0",
+						"disableHostCheck": true,
+						"liveReload": false,
+						"hmr": false,
 						"publicHost": "http://localhost:4202",
 						"extraWebpackConfig": "webpack.config.js"
 					}
